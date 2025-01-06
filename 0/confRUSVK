@@ -46,14 +46,7 @@ for /f "tokens=*" %a in ('powershell -NoProfile -Command "[System.Environment]::
     )
 )
 
-set "Antivirus=No Antivirus"
-for /f "tokens=*" %a in ('powershell -NoProfile -Command "try { (Get-CimInstance -Namespace root/SecurityCenter2 -ClassName AntiVirusProduct).displayName } catch { Write-Host ''No Antivirus'' }"') do (
-    if "!Antivirus!"=="No Antivirus" (
-        set "Antivirus=%a"
-    ) else (
-        set "Antivirus=!Antivirus!, %a"
-    )
-)
+for /f "tokens=*" %a in ('powershell -command "(Get-CimInstance  -Namespace root/SecurityCenter2 -Class AntiVirusProduct).displayName"') do (if defined Antivirus (set "Antivirus=!Antivirus!,%a") else (set "Antivirus=%a"))
 
 set "UserName=%USERNAME%"
 set "Worker=%COMPUTERNAME%"
