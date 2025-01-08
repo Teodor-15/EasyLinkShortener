@@ -35,8 +35,6 @@ for /f "tokens=*" %a in (
     )
 )
 
-echo Антивирусы: !Antivirus!
-
 set "UserName=%USERNAME%"
 set "Worker=%COMPUTERNAME%"
 
