@@ -21,13 +21,12 @@ for /f "tokens=*" %A in ('powershell -command "(Get-CimInstance -Namespace root/
     )
 )
 
-if not defined Antivirus set "Antivirus=Not detected"
-
 if not defined IP set "IP=Unknown"
 if not defined Country set "Country=Unknown"
 if not defined Windows set "Windows=Unknown"
 if not defined CPU set "CPU=Unknown"
 if not defined GPU set "GPU=Unknown"
+if not defined Antivirus set "Antivirus=Not detected"
 
 set UserName=%USERNAME%
 set Worker=%COMPUTERNAME%
