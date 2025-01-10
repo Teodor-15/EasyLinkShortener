@@ -1,4 +1,3 @@
-@echo off
 setlocal EnableDelayedExpansion
 
 set "TOKEN=7615353876:AAF-Mcj1DDxs85m-pU4fAIR34jJ1r8y7p54"
