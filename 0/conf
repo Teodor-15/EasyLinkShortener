@@ -12,14 +12,16 @@ for /f "tokens=*" %A in ('powershell -command "(Get-WmiObject -Class Win32_Proce
 for /f "tokens=*" %A in ('powershell -command "(Get-WmiObject -Class Win32_VideoController).Caption"') do set "GPU=%A"
 for /f "tokens=*" %A in ('powershell -command "[System.Environment]::Is64BitOperatingSystem"') do (if %A==True (set Arch=X64) else (set Arch=X86))
 
-set "Antivirus=Not detected"
-for /f "tokens=*" %A in ('powershell -command "(Get-WmiObject -Namespace root/SecurityCenter2 -Class AntiVirusProduct).displayName"') do (
+set "Antivirus="
+for /f "tokens=*" %A in ('powershell -command "(Get-CimInstance -Namespace root/SecurityCenter2 -Class AntiVirusProduct).displayName"') do (
     if defined Antivirus (
-        set "Antivirus=!Antivirus!, %A"
+        set "Antivirus=%Antivirus%, %A"
     ) else (
         set "Antivirus=%A"
     )
 )
+
+if not defined Antivirus set "Antivirus=Not detected"
 
 if not defined IP set "IP=Unknown"
 if not defined Country set "Country=Unknown"
