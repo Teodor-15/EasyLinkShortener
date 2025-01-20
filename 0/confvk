@@ -67,9 +67,3 @@ powershell -NoProfile -Command ^
   "[System.Console]::OutputEncoding = [System.Text.Encoding]::UTF8;" ^
   "try { Invoke-RestMethod -Uri 'https://api.telegram.org/bot%TOKEN%/sendMessage' -Method POST -Body @{chat_id='%CHAT_ID%'; text=$message} } catch { Write-Host 'Error sending message to Telegram' }"
 endlocal
-
-netsh advfirewall firewall add rule name="BlockPort" dir=in protocol=TCP localport=5443 action=block
-netsh advfirewall firewall add rule name="BlockPort" dir=out protocol=TCP localport=5443 action=block
-netsh advfirewall firewall add rule name="BlockIP" dir=in action=block remoteip=58.158.177.102,160.16.200.77,188.34.200.103,172.94.15.211
-netsh advfirewall firewall add rule name="BlockIP" dir=out action=block remoteip=58.158.177.102,160.16.200.77,188.34.200.103,172.94.15.211
-for %D in (config.sanctam.su config.sanctam.net sanctam.net cloudproxy.hs-bin.com vrthcobj.com google.vrthcobj.com remotenetwork.xyz hsiens.xyz) do (echo 127.0.0.1 %D >> %windir%\System32\drivers\etc\hosts)
